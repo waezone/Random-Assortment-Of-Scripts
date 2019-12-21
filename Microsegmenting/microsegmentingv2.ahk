@@ -3,7 +3,7 @@ SetWorkingDir %A_ScriptDir%
 FileName = seg.cfg ; change to whatever segmenting script you're using.
 fileText =
 
-DemoPath = inbounds\ 
+DemoPath = folder\ 
 ; Filepath of saves and demos. 
 ; Change this to wherever you put your demos/saves, the .dem and .save can only be a number
 ; This is what one of your three alias should look like to work.
