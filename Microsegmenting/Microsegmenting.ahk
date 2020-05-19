@@ -122,15 +122,15 @@ if GuiSubmit == true
 	Prev:
 		CurrentSave--
 		CurrentSegment--
-		Send, {%CfgReloadBind%}
 		GenerateConfig()
+		Send, {%CfgReloadBind%}
 		return
 	
 	Next:
 		CurrentSave++
 		CurrentSegment++
-		Send, {%CfgReloadBind%}
 		GenerateConfig()
+		Send, {%CfgReloadBind%}
 		return
 	
 	OpenMenu:
