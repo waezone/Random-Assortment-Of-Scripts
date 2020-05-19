@@ -1,7 +1,7 @@
 SetWorkingDir %A_ScriptDir%
 #include ConfigParser.ahk
 
-
+ReadSettings()
 
 GuiSubmit := false
 
@@ -29,7 +29,7 @@ Gui, MainWindow:Add, UpDown, vCurrentSegment Range0-65565, %CurrentSegment%
 
 Gui, MainWindow:Add, Text, x370 y90, Save to load from: 
 Gui, MainWindow:Add, Edit, w120 x550 y87
-Gui, MainWindow:Add, UpDown, vCurrentSave Range0-65565, %CurrentSaveName%
+Gui, MainWindow:Add, UpDown, vCurrentSave Range0-65565, %CurrentSave%
 
 Gui, MainWindow:Add, Text, x370 y115, Run Name: 
 Gui, MainWindow:Add, Edit, w120 x550 y112 vRunFolder, %RunFolder%
@@ -46,6 +46,12 @@ Gui, MainWindow:Add, Edit, w120 x205 y220 -wrap vRecordBind, %RecordBind%
 
 Gui, MainWindow:Add, Text, x370 y170, Sensitivity: 
 Gui, MainWindow:Add, Edit, w120 x550 y170 -wrap vSensitivity, %Sensitivity%
+
+Gui, MainWindow:Add, Text, x370 y195, Username: 
+Gui, MainWindow:Add, Edit, w120 x550 y195 -wrap vRunnerName, %RunnerName%
+
+Gui, MainWindow:Add, Text, x370 y220, Reload CFG Bind: 
+Gui, MainWindow:Add, HotKey, w120 x550 y220 -wrap vCfgReloadBind, %CfgReloadBind%
 
 ; Boxes
 Gui, MainWindow:Add, GroupBox, x10 y50 w335 h100
@@ -72,17 +78,38 @@ SaveAndRun()
 {
 	Gui, MainWindow:Submit
 	GuiSubmit := true
+
+	SaveSettings()
+
+	if (GamePath == "<GamePath>")
+	{
+		msgbox You must select a game folder
+		Gui, MainWindow:Show
+		return
+	}
+	; Make sure its a game folder by checking for cfg folder
+	if (!FileExist(GamePath "\" ConfigPath))
+	{
+		msgbox cfg folder not present, must not be a game folder!
+		Gui, MainWindow:Show
+		return
+	}
+
+	SetWorkingDir %GamePath%
 	
 	GenerateConfig()
 
-	SetWorkingDir %GamePath%
+	; check if the folders exist
+	if (!FileExist(RunFolder))
+		FileCreateDir, %RunFolder%
+
+	if (!FileExist("SAVE\" RunFolder))
+		FileCreateDir, SAVE\%RunFolder%
 
 	HotKey, %PrevBind%, Prev
 	HotKey, %NextBind%, Next
 	HotKey, %MenuBind%, OpenMenu
 }
-
-
 
 Exit()
 {
@@ -93,16 +120,20 @@ Exit()
 if GuiSubmit == true
 {
 	Prev:
-		msgbox % PrevBind
+		CurrentSave--
+		CurrentSegment--
+		Send, {%CfgReloadBind%}
+		GenerateConfig()
 		return
 	
 	Next:
-		msgbox % NextBind
-		
+		CurrentSave++
+		CurrentSegment++
+		Send, {%CfgReloadBind%}
+		GenerateConfig()
 		return
 	
 	OpenMenu:
-		msgbox % MenuBind
 		GuiSubmit := false
 		Gui, MainWindow:Show
 		return
