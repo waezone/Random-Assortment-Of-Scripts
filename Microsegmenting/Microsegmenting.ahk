@@ -1,23 +1,7 @@
 SetWorkingDir %A_ScriptDir%
 #include ConfigParser.ahk
 
-; Script binds
-global GamePath := "<GamePath>"
 
-global PrevBind := "PgDn"
-global NextBind := "PgUp"
-global MenuBind := "Home"
-
-global CurrentSave := 0
-global CurrentSegment := 1
-global RunFolder := "Segmented"
-
-; Game binds
-
-global StopBind := "mouse4"
-global LoadBind := "i"
-global RecordBind := "o"
-Global Sensitivity := "2.3"
 
 GuiSubmit := false
 
@@ -89,12 +73,16 @@ SaveAndRun()
 	Gui, MainWindow:Submit
 	GuiSubmit := true
 	
+	GenerateConfig()
+
 	SetWorkingDir %GamePath%
 
 	HotKey, %PrevBind%, Prev
 	HotKey, %NextBind%, Next
 	HotKey, %MenuBind%, OpenMenu
 }
+
+
 
 Exit()
 {
@@ -119,3 +107,4 @@ if GuiSubmit == true
 		Gui, MainWindow:Show
 		return
 }
+
